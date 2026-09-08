@@ -8,6 +8,7 @@ interface TugasContext {
   handleAddTugas: (newTugas: taskType) => void;
   handleEditCatTugas: (tugasId: number, newCat: string) => void;
   handleDelTugas: (targetId: number) => void;
+  handleEditTugas: (tugasId: number, newTugas: string) => void;
 }
 
 export const TugasContext = createContext<TugasContext | null>(null);
@@ -45,7 +46,6 @@ export default function TugasProvider({ children }: { children: React.ReactNode 
   const handleEditTugas = (tugasId: number, newTugas: string) => {
     setTugas((prev) =>
       prev.map((item) =>
-        // objek bukan array, jadi pake {} bukan []
         item.id === tugasId ? { ...item, tugas: newTugas } : item
       )
     )
@@ -58,7 +58,7 @@ export default function TugasProvider({ children }: { children: React.ReactNode 
   }
 
   return (
-    <TugasContext value={{ tugas, handleAddTugas, handleEditCatTugas, handleDelTugas }}>
+    <TugasContext value={{ tugas, handleAddTugas, handleEditCatTugas, handleDelTugas, handleEditTugas }}>
       {children}
     </TugasContext>
   )

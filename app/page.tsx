@@ -2,10 +2,10 @@
 
 import useFormData from "@/components/hook/useFormData";
 import AddButton from "@/components/ui/addButton";
+import FormEdit from "@/components/ui/edit_form";
 import Form from "@/components/ui/form";
 import Modal from "@/components/ui/modal";
 import CategoryProvider from "@/components/util/categoryProvider";
-import ModalProvider from "@/components/util/modalProvider";
 import { TugasContext } from "@/components/util/tugasProvider";
 import { useContext } from "react";
 
@@ -22,6 +22,8 @@ export interface taskType {
 }
 
 export default function Home() {
+  const modalContext = useFormData();
+
   const tugasContext = useContext(TugasContext);
   if (!tugasContext) {
     throw new Error("bukan di dalam TugasProvider");
@@ -43,18 +45,20 @@ export default function Home() {
 
   return (
     <>
-      <ModalProvider>
-        <CategoryProvider>
-          <Modal>
+      <CategoryProvider>
+        <Modal>
+          {modalContext.edit ?
+            <FormEdit></FormEdit>
+            :
             <Form></Form>
-          </Modal>
-          <div className="h-dvh flex flex-row gap-2 p-2">
-            <Category catId={statusEnum.start} color="bg-blue-400" tugas={tugas} handleDrop={handleDrop}></Category>
-            <Category catId={statusEnum.progress} color="bg-amber-500" tugas={tugas} handleDrop={handleDrop}></Category>
-            <Category catId={statusEnum.finish} color="bg-emerald-700" tugas={tugas} handleDrop={handleDrop}></Category>
-          </div>
-        </CategoryProvider>
-      </ModalProvider>
+          }
+        </Modal>
+        <div className="h-dvh flex flex-row gap-2 p-2">
+          <Category catId={statusEnum.start} color="bg-blue-400" tugas={tugas} handleDrop={handleDrop}></Category>
+          <Category catId={statusEnum.progress} color="bg-amber-500" tugas={tugas} handleDrop={handleDrop}></Category>
+          <Category catId={statusEnum.finish} color="bg-emerald-700" tugas={tugas} handleDrop={handleDrop}></Category>
+        </div>
+      </CategoryProvider>
     </>
   )
 }
@@ -89,7 +93,9 @@ function Card({ id, tugas, status }: taskType) {
   const delTugas = (targetId: number) => tugasContext.handleDelTugas(targetId);
 
   const modalContext = useFormData();
-  const openModal = () => modalContext.handleSetOpen();
+  const openModalEdit = (id: number, tugas: string) => {
+    modalContext.handleSetEdit(id, tugas);
+  }
 
   return (
     <div id={String(id)} className="relative bg-white cursor-grab border border-gray-300 rounded-lg p-5"
@@ -99,7 +105,7 @@ function Card({ id, tugas, status }: taskType) {
       onDragOver={handleDragOver}>
       <div className="absolute right-3 top-2 **:text-sm flex gap-2">
         <div className="px-1.5 rounded-full hover:bg-black/5 cursor-pointer"
-        onClick={openModal}>e</div>
+          onClick={() => openModalEdit(id, tugas)}>e</div>
         <div className="px-1.5 rounded-full hover:bg-red-600 hover:text-white cursor-pointer"
           onClick={() => delTugas(id)}>x</div>
       </div>
