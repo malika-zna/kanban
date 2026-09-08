@@ -1,6 +1,6 @@
 import ModalProvider from "@/components/util/modalProvider";
 import Modal from "@/components/ui/modal";
-import Form2 from "@/components/ui/form2";
+import Form2 from "@/components/ui/form";
 import CategoryProvider from "@/components/util/categoryProvider";
 import { Category } from "@/components/ui/category";
 

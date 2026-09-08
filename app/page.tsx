@@ -1,11 +1,13 @@
 "use client"
 
+import useFormData from "@/components/hook/useFormData";
 import AddButton from "@/components/ui/addButton";
-import Form2 from "@/components/ui/form2";
+import Form from "@/components/ui/form";
 import Modal from "@/components/ui/modal";
 import CategoryProvider from "@/components/util/categoryProvider";
 import ModalProvider from "@/components/util/modalProvider";
-import { useEffect, useState } from "react";
+import { TugasContext } from "@/components/util/tugasProvider";
+import { useContext } from "react";
 
 enum statusEnum {
   start = 1,
@@ -13,59 +15,19 @@ enum statusEnum {
   finish = 3
 }
 
-interface taskType {
+export interface taskType {
   id: number;
   tugas: string;
   status: string
 }
 
-const item = [
-  {
-    "id": 1788682959088,
-    "tugas": "bbb",
-    "status": statusEnum[1]
-  },
-  {
-    "id": 1788682968216,
-    "tugas": "kkkk",
-    "status": statusEnum[2]
-  },
-  {
-    "id": 1788683068210,
-    "tugas": "aa",
-    "status": statusEnum[3]
-  }
-]
-
-const storageKey = "todoTersimpan"
-
 export default function Home() {
-  const [tugas, setTugas] = useState<taskType[]>(item);
-
-  // useEffect(() => {
-  //   const rawData = localStorage.getItem(storageKey);
-
-  //   if (!rawData) {
-  //     console.warn("Data NULL! Pastikan nama key di tab Application SAMA PERSIS (termasuk huruf besar/kecil).");
-  //     return;
-  //   }
-
-  //   try {
-  //     const parsed = JSON.parse(rawData);
-
-  //     if (Array.isArray(parsed)) {
-  //       setTugas(parsed);
-  //     } else {
-  //       console.error("Data di LocalStorage bukan Array! Bungkus data dalam array [].");
-  //     }
-  //   } catch (err) {
-  //     console.error("Gagal parse JSON. Data korup:", err);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   localStorage.setItem(storageKey, JSON.stringify(tugas))
-  // }, [tugas])
+  const tugasContext = useContext(TugasContext);
+  if (!tugasContext) {
+    throw new Error("bukan di dalam TugasProvider");
+  }
+  const tugas = tugasContext.tugas;
+  const editTugas = (tugasId: number, newCat: string) => { tugasContext.handleEditCatTugas(tugasId, newCat) }
 
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
@@ -74,11 +36,7 @@ export default function Home() {
     const newId = Number(e.currentTarget.getAttribute("id"));
     console.log(dragged)
     if (dragged && newId && draggedId) {
-      setTugas((prevItems) =>
-        prevItems.map((task) =>
-          task.id === draggedId ? { ...task, status: statusEnum[newId] } : task
-        )
-      )
+      editTugas(draggedId, statusEnum[newId]);
     };
     e.currentTarget.classList.remove("!bg-black/5")
   }
@@ -88,7 +46,7 @@ export default function Home() {
       <ModalProvider>
         <CategoryProvider>
           <Modal>
-            <Form2></Form2>
+            <Form></Form>
           </Modal>
           <div className="h-dvh flex flex-row gap-2 p-2">
             <Category catId={statusEnum.start} color="bg-blue-400" tugas={tugas} handleDrop={handleDrop}></Category>
@@ -126,12 +84,25 @@ function Category({ catId, color, tugas, handleDrop }: { catId: number, color: s
 }
 
 function Card({ id, tugas, status }: taskType) {
+  const tugasContext = useContext(TugasContext);
+  if (!tugasContext) throw new Error("Bukan di dalam TugasProvider");
+  const delTugas = (targetId: number) => tugasContext.handleDelTugas(targetId);
+
+  const modalContext = useFormData();
+  const openModal = () => modalContext.handleSetOpen();
+
   return (
-    <div id={String(id)} className="bg-white cursor-grab border border-gray-300 rounded-lg p-5"
+    <div id={String(id)} className="relative bg-white cursor-grab border border-gray-300 rounded-lg p-5"
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}>
+      <div className="absolute right-3 top-2 **:text-sm flex gap-2">
+        <div className="px-1.5 rounded-full hover:bg-black/5 cursor-pointer"
+        onClick={openModal}>e</div>
+        <div className="px-1.5 rounded-full hover:bg-red-600 hover:text-white cursor-pointer"
+          onClick={() => delTugas(id)}>x</div>
+      </div>
       <div className="mb-4">{tugas}</div>
       <div className="flex justify-between opacity-50">
         <p className="text-xs">#{id}</p>

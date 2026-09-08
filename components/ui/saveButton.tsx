@@ -1,10 +1,6 @@
 "use client"
 
-import useFormData from "../hook/useFormData";
-
 export default function SaveButton() {
-  const { handleSetOpen } = useFormData();
-
   return (
     <button type="submit" className="justify-center flex flex-1 bg-black/10 rounded-lg p-3 py-2"
       >
