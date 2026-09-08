@@ -27,7 +27,7 @@ export default function FormEdit() {
     <form onSubmit={editTask}
       className='size-full flex flex-col justify-between '>
       <h1 className="text-2xl font-bold">Edit Item</h1>
-      <input name="tugas" type="text" required placeholder="nama tugas" className="border-2" value={teksAwal} onChange={(e) => setTyped(e.target.value)} />
+      <input name="tugas" type="text" required placeholder="nama tugas" value={teksAwal} onChange={(e) => setTyped(e.target.value)} />
       <div className="flex gap-2">
         <CancelButton></CancelButton>
         <SaveButton></SaveButton>

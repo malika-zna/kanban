@@ -25,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col [&_input]:border [&_input]:rounded-lg [&_input]:p-2 [&_input]:px-3">
         <ModalProvider>
           <TugasProvider>
             {children}

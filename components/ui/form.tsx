@@ -59,7 +59,7 @@ export default function Form() {
     <form onSubmit={addTask}
       className='size-full flex flex-col justify-between '>
       <h1 className="text-2xl font-bold">Tambahkan Item</h1>
-      <input name="tugas" type="text" required placeholder="nama tugas" className="border-2" onChange={(e) => setTyped(e.target.value)} />
+      <input name="tugas" type="text" required placeholder="nama tugas" onChange={(e) => setTyped(e.target.value)} />
       <div className="flex gap-2">
         <CancelButton></CancelButton>
         <SaveButton></SaveButton>
